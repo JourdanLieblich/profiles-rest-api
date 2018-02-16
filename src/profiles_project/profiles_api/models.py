@@ -1,3 +1,61 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import BaseUserManager
 
-# Create your models here.
+# User Profile BaseUserManager
+
+class UserProfileManager(BaseUserManager):
+    """Helps Django to work with our custom user model"""
+
+    def create_user(self, name, email, password=None):
+        """Creates a new user profile"""
+
+        if not email:
+            raise ValueError('Users must supply an email address')
+
+        email = self.normalize_email(email)
+        user = self_model(email=email,name=name)
+
+        user.set_password(password)
+        user.save(using=self.db)
+
+        return user
+
+    def create_super_user(self, name, email, password):
+        """Creates a new super user"""
+
+        super_user = create_user(self, name, email, password)
+        super_user.is_superuser = True
+        super_user.is_staff = True
+
+        super_user.save(using=self.db)
+
+        return super_user
+
+# Models Created Below
+
+class UserProfile(AbstractBaseUser, PermissionsMixin):
+    """"Represents a user profile inside our system"""
+
+    email = models.EmailField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserProfileManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
+
+    def get_full_name(self):
+        """Used to return the full username"""
+        return self.name
+
+    def get_short_name(self):
+        """Used to get the users short name"""
+        return self.name
+
+    def __str__(self):
+        """Used by Django to convert the object to a string"""
+        return self.email
