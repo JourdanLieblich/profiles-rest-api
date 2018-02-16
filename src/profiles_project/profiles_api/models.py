@@ -8,24 +8,24 @@ from django.contrib.auth.models import BaseUserManager
 class UserProfileManager(BaseUserManager):
     """Helps Django to work with our custom user model"""
 
-    def create_user(self, name, email, password=None):
+    def create_user(self, email, name, password=None):
         """Creates a new user profile"""
 
         if not email:
             raise ValueError('Users must supply an email address')
 
         email = self.normalize_email(email)
-        user = self_model(email=email,name=name)
+        user = self.model(email=email,name=name)
 
         user.set_password(password)
         user.save(using=self.db)
 
         return user
 
-    def create_super_user(self, name, email, password):
+    def create_superuser(self, name, email, password):
         """Creates a new super user"""
 
-        super_user = create_user(self, name, email, password)
+        super_user = self.create_user(email, name, password)
         super_user.is_superuser = True
         super_user.is_staff = True
 
