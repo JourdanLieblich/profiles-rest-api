@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -8,7 +9,6 @@ from . import serializers
 
 
 # Create your views here.
-
 
 class HelloApiView(APIView):
     """
@@ -55,3 +55,17 @@ class HelloApiView(APIView):
         """Handles the deletion of a db object"""
 
         return Response({'method': 'delete'})
+
+
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test API Viewset"""
+
+    def list(self, request):
+        """Return a hello message"""
+        a_viewset = [
+            'Uses actions list create update partial update destroy',
+            'automatically maps to urls useing routers',
+            'more functionality from less code',
+        ]
+        return Response({'message': a_viewset})
